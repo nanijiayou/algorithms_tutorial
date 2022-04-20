@@ -17,11 +17,13 @@ LIST(APPEND algoList
     DisjointSet
     SparseTable)
 
-# DC
+# DC & Linear
 LIST(APPEND algoList
     MergeSort
+    BucketSort
     QuickSort
     QuickSelect
+    MaxSubArray
     CountingSort)
 
 # tree
@@ -59,7 +61,8 @@ LIST(APPEND algoList
 
 
 LIST(APPEND algoList
-    Compose)
+    Compose
+    Premutation)
 
 
 foreach(X IN LISTS algoList)
