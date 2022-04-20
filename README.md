@@ -11,11 +11,13 @@ personal algorithms collections
     DisjointSet
     SparseTable
 
-# DC
+# DC & Linear
     MergeSort
+    BucketSort
     QuickSort
     QuickSelect
-    CountingSort)
+    MaxSubArray
+    CountingSort
 
 # tree
     SegementTree
@@ -47,11 +49,22 @@ personal algorithms collections
     EdmondsKarp
     FordFulkerson
     PushRelabel
+
+# BackTrack 
+    Compose
+    Premutation
 ```
 
 ## Build
-use CMake
+Use CMake
 
+### MacOS 
+```
+mkdir -p build && cd build
+cmake -G Xcode ..
+```
+
+### Windows
 ```
 mkdir -p build && cd build
 cmake ...
