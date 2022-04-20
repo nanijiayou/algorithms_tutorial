@@ -57,6 +57,11 @@ LIST(APPEND algoList
     FordFulkerson
     PushRelabel)
 
+
+LIST(APPEND algoList
+    Compose)
+
+
 foreach(X IN LISTS algoList)
     add_executable(${X} ${X}/main.cpp)
     message(STATUS "add ${X}/main.cpp")

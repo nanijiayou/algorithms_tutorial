@@ -4,9 +4,9 @@ using namespace std;
 
 void printArr(vector<int>& A) {
     for(const auto & k : A) {
-        std::cout << k << " ";
+        cout << k << " ";
     }
-    std::cout << std::endl;
+    cout << std::endl;
 }
 
 void countingSort(vector<int>& A, vector<int>& B, int k) {
@@ -31,7 +31,8 @@ void countingSort(vector<int>& A, vector<int>& B, int k) {
 }
 
 int main() {
-    // vector<int> test { 1, 3, 7, 5, 9 };
-    // countingSort(test);
+    vector<int> test { 1, 3, 7, 5, 9 };
+    vector<int> temp = test;
+    countingSort(test, temp, 4);
     return 0;
 }

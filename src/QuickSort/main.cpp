@@ -1,9 +1,17 @@
 #include <iostream>
 #include <vector>
-
 using namespace std;
 
-int partition(vector<int>& A, int p, int r) {
+void printArr(vector<int>& A) {
+    vector<int>::iterator iter = A.begin();
+    while(iter != A.end()) {
+        cout << *iter;
+        iter++;
+    }
+    cout << endl;
+}
+
+int partition(vector<int> &A, int p, int r) {
     int x = A[r];
     int i = p - 1;
     for(int j = p; j < r; ++j) {
@@ -13,23 +21,28 @@ int partition(vector<int>& A, int p, int r) {
     return i + 1;
 }
 
-int randomPartiton(vector<int>& A, int p, int r) {
+int randomPartition(vector<int> &A, int p, int r) { 
     int i = rand() % (r - p + 1) + p;
-    swap(A[i], A[r]);
+    swap(A[r], A[i]);
     return partition(A, p, r);
 }
 
-void randomQuickSort(vector<int>& A, int p, int r) {
+void quickSort(vector<int> &A, int p, int r) {
     if(p < r) {
-        int q = randomPartiton(A, p, r);
-        randomQuickSort(A, p, q - 1);
-        randomQuickSort(A, q + 1, r);
+        int pivot = randomPartition(A, p, r);
+        quickSort(A, p, pivot - 1);
+        quickSort(A, pivot + 1, r);
     }
 }
 
+void sort(vector<int> &A) {
+    int n = A.size();
+    quickSort(A, 0, n-1);
+}
+
 int main() {
-    vector<int> test { 1, 3, 7, 5, 9 };
-    int n = test.size();
-    randomQuickSort(test, 0, n-1);
+    vector<int> test { 1, 7, 3, 5, 9, 6, 8};
+    sort(test); 
+    printArr(test);
     return 0;
 }
