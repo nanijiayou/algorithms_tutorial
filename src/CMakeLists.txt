@@ -59,11 +59,14 @@ LIST(APPEND algoList
     FordFulkerson
     PushRelabel)
 
-
+# backtrack
 LIST(APPEND algoList
     Compose
     Premutation)
-
+    
+# DP
+LIST(APPEND algoList
+    DP)
 
 foreach(X IN LISTS algoList)
     add_executable(${X} ${X}/main.cpp)
