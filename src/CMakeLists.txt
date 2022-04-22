@@ -31,6 +31,7 @@ LIST(APPEND algoList
     SegementTree
     Treap
     FHQTreap
+    IntervalTree
     SplayTree)
 
 # graph part
