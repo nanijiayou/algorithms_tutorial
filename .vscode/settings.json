@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "tuple": "cpp"
+        "tuple": "cpp",
+        "xtree": "cpp",
+        "map": "cpp"
     }
 }
