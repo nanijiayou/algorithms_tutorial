@@ -8,7 +8,7 @@ using namespace std;
 
 class RangeList {
  private:
-  map<int, int> tree;
+  map<int, int> tree; // use defalut key
 
  public:
   RangeList() {}
@@ -21,10 +21,7 @@ class RangeList {
   }
 
   void add(int low, int high) {
-    if (low > high)
-      throw "invalid input, value of low should samll than value of high!";
-
-    map<int, int>::iterator iter = tree.lower_bound(low);
+    auto iter = tree.lower_bound(low);
     while (iter != tree.end() && iter->second <= high) {
       low = min(low, iter->second);
       high = max(high, iter->first);
@@ -34,7 +31,7 @@ class RangeList {
   }
 
   void remove(int low, int high) {
-    map<int, int>::iterator iter = tree.upper_bound(low);
+    auto iter = tree.upper_bound(low);
     while (iter != tree.end() && iter->second < high) {
       int last_low = iter->second;
       int last_high = iter->first;
@@ -51,7 +48,7 @@ class RangeList {
   }
 
   void print() {
-    map<int, int>::iterator iter = tree.begin();
+    auto iter = tree.begin();
     while (iter != tree.end()) {
       cout << "[" << iter->second << "," << iter->first << ") ";
       iter++;

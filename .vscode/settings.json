@@ -3,5 +3,6 @@
         "tuple": "cpp",
         "xtree": "cpp",
         "map": "cpp"
-    }
+    },
+    "cmake.configureOnOpen": false
 }
