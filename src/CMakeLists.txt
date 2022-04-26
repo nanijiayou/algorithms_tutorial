@@ -73,6 +73,10 @@ LIST(APPEND algoList
 LIST(APPEND algoList
     LRU)
 
+# Random
+LIST(APPEND algoList
+    ReservoirSampling)
+
 foreach(X IN LISTS algoList)
     add_executable(${X} ${X}/main.cpp)
     message(STATUS "add ${X}/main.cpp")

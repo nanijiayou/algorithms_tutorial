@@ -148,6 +148,7 @@ void LRU::print() {
 
 LRU::~LRU(){};
 
+
 int main() {
   int a[7] = {1, 3, 5, 8, 9, 7, 2};
   LinkedList list;
