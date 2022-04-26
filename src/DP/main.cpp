@@ -10,95 +10,61 @@
 #include <vector>
 using namespace std;
 
-vector<int> a = {2, 4, 3, 3, 1, 5, 6, 7};
-vector<int> c = {7, 7, 7, 7, 7, 7, 7, 7};
+/**
+ * 背包问题
+ *
+ * 1. 0-1背包问题
+ *
+ * 问题：
+ * 有 n 个物品和一个容量为 W 的背包，每个物品有重量 w_i 和 价值 v_i 两种属性，
+ * 要求选若干物品放入背包，使得背包中物品的总价值最大而且背包中物品的总重量不超过背包容量。
+ * 每个物品只有取与不取两种状态，对应二进制0和1，所以问题也称为「0-1背包问题」
+ *
+ * 转移方程：
+ * 设DP状态 f[i][j] 为在只放了前 i 个物品的情况下，容量为 j 的背包所能达到的最大价值。
+ * 状态转移：假设当前已经处理好前 i-1 个物品，那么对于第 i 个物品，
+ *  1. 当其不放人背包时，背包的剩余容量不变，背包中物品的总价值也不变，此时最大价值为 f[i-1][j]
+ *  2. 当其放入背包时，背包的剩余容量会减少 w[i]，背包物品的总价值会增加 v[i]，此时最大价值为 f[i-1][j-w[i]] + v[i]
+ *  故状态转移方程为：f[i][j] = max(dp[i-1][j], f[i-1][j-w[i]] + v[i])
+ *
+ * 优化：因为对 f[i] 有影响的只有 f[i-1], 所以可以去掉第一维，直接用 f[i] 来表示处理当前物品时，背包容量为 i 的最大价值。
+ * 得到转移方程为：
+ *  f[j] = max(f[j], f[j-w[i]] + v[i])
+ *
+ * 核心代码：
+ *  for(int i = 1; i <= n; i++)
+ *    for(int l = W; l >= w[i]; l--)
+ *      f[l] = max(f[l], f[l-w[i]]+v[i]) // 注意：这里必须是从W到w[i]，否则一个物品会被多次放入背包。
+ *
+ * 常见错误实现：
+ *  for(int i = 1; i <= n; i++)
+ *    for(int l = 0; l <= W - w[i]; l++)
+ *      f[l+w[i]] = max(f[l] + v[i], f[l + w[i]]); // f[i][l + w[i]] = max(max(f[i - 1][l + w[i]],f[i - 1][l] + w[i]),f[i][l + w[i]])
+ *  原因：当前处理物品 i 和 当前状态 f[i][j]，在 j>=w[i]时，f[i][j]是会被f[i][j-w[i]]所影响的。相当于物品 i 可以被多次放入背包（完全背包问题）。
+ *  为了避免这种情况，可以改变枚举顺序，从W枚举到w[i]。这样就不会出现这种情况，因为 f[i][j] 总在 f[i][j-w[i]] 之前被更新。
+ */
 
-int n = a.size();
-int mem[8];
-
-// LIS(Longest Increasing Subsequence) promble
-// 最长上升（递增）子序列问题
-
-/** solution1: 记忆话化搜索 */
-int dfs(int i) {
-  if (mem[i] != -1) return mem[i];
-  int ret = 1;
-  for (int j = 0; j < i; ++j) {
-    if (a[j] < a[i]) ret = max(ret, dfs(j) + 1);
-  }
-  mem[i] = ret;
-  return mem[i];
-}
-
-/** solution2: dp */
-// f(i)为以第i个元素为结尾的最长上升子序列长度
-// O(n^2)
-// dp_i = max{dp_j + 1} (1 <= j < i and a_j < a_i);/
-int LIS(vector<int> a) {
-  int n = a.size();
-  int ans = 1;
-  vector<int> f(n + 1, 1);
-  for (int i = 1; i < n; ++i) {
-    for (int j = 0; j < i; ++j) {
-      if (a[i] > a[j]) {
-        f[i] = max(f[i], f[j] + 1);
-        ans = max(ans, f[i]);
-      }
-    }
-  }
-  return ans;
-};
-
-
-/** 最长上升子序列 二分优化 */
-int LISBIN(vector<int> a) {
-  // dp[i]表示长度为i的最长上升子序列的末尾的最小值
-  vector<int> dp;
-  for(auto n : a) {
-    auto iter = lower_bound(dp.begin(), dp.end(), n);
-    if(iter != dp.end()) *iter = n;
-    else dp.push_back(n);
-  }
-  return dp.size();
-}
-
-// 最长严格递增子序列
-// dp[k]表示长度为k的不下降子序列末尾元素的最小值/
-int LIS3(vector<int> a) {
-  vector<int> dp;
-  for(auto n : a) {
-    auto iter = upper_bound(dp.begin(), dp.end(), n);
-    if(iter != dp.end()) *iter = n;
-    else dp.push_back(n);
-  }
-  return dp.size();
-}
-
-// LCS Longest Common Subsequence
-string str1 = "abcde", str2 = "ace";
-int LCS(string &a, string &b) {
-  int len1 = a.size(), len2 = b.size();
-  vector<vector<int>> dp(len1 + 1, vector<int>(len2 + 1, 0));
-  // dp[i][j]代表a的前i位，b的前j位的LCS长度
-  // 这里i,j从1开始，而字符串中的位置则是i-1
-  for (int i = 1; i <= len1; ++i) {
-    for (int j = 1; j <= len2; ++j) {
-      if (a[i-1] == a[j-1])
-        dp[i][j] = dp[i - 1][j - 1] + 1;
-      else
-        dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
-    }
-  }
-  return dp[len1][len2];
-}
+/**
+ * 完全背包问题
+ * 问题：
+ * 完全背包模型与 0-1 背包类似，与 0-1 背包的区别仅在于一个物品可以选取无限次，而非仅能选取一次。
+ *
+ * 状态定义： 设 f[i][j] 为只能选前 i 个物品时，容量为 j 的背包可以达到的最大价值。
+ * 转移方程：f[i][j] = max(f[i-1][j - kw[i] + kv[i]) k <= 0 < inf
+ *
+ * 优化：对于f[i][j] 只要通过 f[i][j-w[i]] 转移就可以了，
+ * 因为 f[i][j-w[i]] 已经由 f[i][j-2w[i]]更新过，那么 f[i][j-w[i]] 就是充分考虑了第 i 件物品所选次数后得到的最优结果。
+ * 换言之，我们通过局部最优子结构的性质重复使用了之前的枚举过程，优化了枚举的复杂度。
+ *
+ * 优化的状态转移方程为：f[i][j] = max(f[i-1][j], f[i][j-w[i]]+v[i])
+ *
+ * 核心代码：
+ *    for (int i = 1; i <= n; i++)
+ *      for (int l = w[i]; l <= W; l++)
+ *        f[l] = max(f[l], f[l-w[i]] + v[i]  // if (f[l - w[i]] + v[i] > f[l]) f[l] = f[l - w[i]] + v[i];
+ *
+ */
 
 int main() {
-  memset(mem, -1, sizeof(mem));
-  cout << "LIS 记忆化搜索: " << dfs(n-1) << endl;
-  cout << "LIS dp: " << LIS(a) << endl;
-  cout << "LIS 二分优化: " << LISBIN(a) << endl;
-  cout << "LIS 二分优化: " << LISBIN(c) << endl;
-  cout << "LIS 不下降最长子序列: " << LIS3(a) << endl;
-  cout << "LCS 最长公共子序列: " << LCS(str1, str2) << endl;
   return 0;
 }
