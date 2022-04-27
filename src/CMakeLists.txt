@@ -71,6 +71,7 @@ LIST(APPEND algoList
 
 # Design
 LIST(APPEND algoList
+    MonotonicStack
     LRU)
 
 # Random
