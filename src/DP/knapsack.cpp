@@ -58,7 +58,7 @@ int main() {
   cout << " ans of capacity of 6 is: " << ans3 << endl; 
 
   int ans4 = solveUnboundedKnapsack(wts, vals, 6);
-  cout << " ans of unbounded capacity of 6 is: " << ans4 << endl; 
+  cout << " ans of unbounded capacity of 6 is: " << ans4 << endl;
 
   return 0;
 }
