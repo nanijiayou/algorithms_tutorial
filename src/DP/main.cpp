@@ -16,7 +16,7 @@ int solveKnapsack(vector<int> &wts, vector<int> &vals, int capacity) {
   for(int i = 1; i <= n; ++i) {
     for(int j = 1; j <= capacity; j++) {
       dp[i][j] = dp[i-1][j];
-      if(j >= wts[i-1]) { 
+      if(j >= wts[i-1]) {
         // 这里只是要保证 j >= wts[i-1]，容错：dp[i-1][j-wts[i-1]]
         dp[i][j] = max(dp[i-1][j], dp[i-1][j-wts[i-1]] + vals[i-1]);
       }
@@ -40,8 +40,8 @@ int solveKnapsackOpt(vector<int> &wts, vector<int> &vals, int capacity) {
 int solveUnboundedKnapsack(vector<int> &wts, vector<int> &vals, int capacity) {
   vector<int> dp(capacity + 1, 0);
   for(int i = 1; i <= n; ++i) {
-    for(int c = wts[i-1]; c <= capacity; c++) {
-      dp[c] = max(dp[c], dp[c-wts[i-1]] + vals[i-1]);
+    for(int j = wts[i-1]; j <= capacity; j++) {
+      dp[j] = max(dp[j], dp[j-wts[i-1]] + vals[i-1]);
     }
   }
   return dp[capacity];
@@ -63,12 +63,12 @@ int Ep(char *s, int n, int left, int right) {
 int Lep(char *s) {
   int n = strlen(s);
   if(n <= 0) return 0;
-
-  int max_len = 1; 
+  
+  int max_len = 1;
   for(int i = 0; i < n; i++) {
     int k1 = Ep(s, n, i - 1, i + 1);
     int k2 = Ep(s, n, i, i + 1);
-
+    
     int len1 = k1 * 2 + 1;
     int len2 = k2 * 2;
     int m = max(len1, len2);
@@ -100,7 +100,7 @@ int LepD(char * s) {
       }
       dp[j] = start;
     }
-
+    
     int len = j - dp[j] + 1;
     max_len = max(max_len, len);
   }
@@ -130,24 +130,36 @@ int LepD2(char* s) {
   return max_len;
 }
 
+// 完全平方数
+int numSqua(int n) {
+  vector<int> dp(n + 1, 2e9);
+  dp[0] = 0;
+  for(int i = 1; i * i <= n; ++i) {
+    for (int j = i * i; j <= n; j++) {
+      dp[j] = min(dp[j], dp[j- i * i] + 1);
+    }
+  }
+  return dp[n];
+}
+
 int main() {
   int ans = solveKnapsack(wts, vals, 7);
-  cout << " ans of capacity of 7 is: " << ans << endl; 
-
+  cout << " ans of capacity of 7 is: " << ans << endl;
+  
   int ans2 = solveKnapsack(wts, vals, 6);
-  cout << " ans of capacity of 6 is: " << ans2 << endl; 
-
+  cout << " ans of capacity of 6 is: " << ans2 << endl;
+  
   int ans3 = solveKnapsackOpt(wts, vals, 6);
-  cout << " ans of capacity of 6 is: " << ans3 << endl; 
-
+  cout << " ans of capacity of 6 is: " << ans3 << endl;
+  
   int ans4 = solveUnboundedKnapsack(wts, vals, 6);
-  cout << " ans of unbounded capacity of 6 is: " << ans4 << endl; 
-
-
+  cout << " ans of unbounded capacity of 6 is: " << ans4 << endl;
+  
   char* a = "abaabcecbacef";
   cout << "max center " << Lep(a) << endl;
   cout << "max dp1 " << LepD(a) << endl;
   cout << "max dp2 " << LepD2(a) << endl;
-
+  
+  cout << " num squares: " << numSqua(12) << endl;
   return 0;
 }
