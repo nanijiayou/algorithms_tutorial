@@ -28,6 +28,7 @@ LIST(APPEND algoList
 
 # tree
 LIST(APPEND algoList
+    BinaryIndexTree
     SegementTree
     Treap
     FHQTreap

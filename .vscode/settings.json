@@ -2,7 +2,8 @@
     "files.associations": {
         "tuple": "cpp",
         "xtree": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "algorithm": "cpp"
     },
     "cmake.configureOnOpen": false
 }

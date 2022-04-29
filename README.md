@@ -20,9 +20,11 @@ personal algorithms collections
     CountingSort
 
 # tree
+    BinaryIndexTree
     SegementTree
     Treap
     FHQTreap
+    IntervalTree
     SplayTree
 
 # graph part
@@ -50,9 +52,21 @@ personal algorithms collections
     FordFulkerson
     PushRelabel
 
-# BackTrack 
+# backtrack
     Compose
     Premutation
+    
+# DP
+    Substr
+    Knapsack
+
+# Design
+    MonotonicStack
+    LRU
+
+# Random
+    KnuthShuffle
+    ReservoirSampling
 ```
 
 ## Build

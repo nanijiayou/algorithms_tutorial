@@ -19,7 +19,7 @@ void build(int k, int tl, int tr) {
     else {
         int m = tl + (tr - tl >> 1);            // m为中间节点，左子树节点区间：[l, m]；右子树区间：[m+1, r];
         build(k << 1, tl, m);                   // 递归构造左儿子节点
-        build((k << 1) + 1, m + 1, tr);         // 递归构造右儿子节点
+        build((k << 1) + 1, m + 1, tr);         // 构造右儿递归子节点
         t[k] = merge(k << 1, (k << 1) + 1);     // 完成阶段，更新父节点
     }
 };
@@ -75,10 +75,6 @@ void printArr(vector<int>& A) {
     }
     cout << endl;
 };
-
-
-
-
 
 int main() {
     //           [0,4]
