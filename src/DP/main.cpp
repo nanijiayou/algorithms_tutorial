@@ -131,16 +131,16 @@ int LepD2(char* s) {
 }
 
 // 完全平方数/
-// int numSqua(int n) {
-//   vector<int> dp(n + 1, 2e9);
-//   dp[0] = 0;
-//   for(int i = 1; i * i <= n; ++i) {
-//     for (int j = i * i; j <= n; j++) {
-//       dp[j] = min(dp[j], dp[j- i * i] + 1);
-//     }
-//   }
-//   return dp[n];
-// }
+int numSqua(int n) {
+  vector<int> dp(n + 1, 2e9);
+  dp[0] = 0;
+  for(int i = 1; i * i <= n; ++i) {
+    for (int j = i * i; j <= n; j++) {
+      dp[j] = min(dp[j], dp[j- i * i] + 1);
+    }
+  }
+  return dp[n];
+}
 
 int main() {
   int ans = solveKnapsack(wts, vals, 7);
@@ -159,7 +159,6 @@ int main() {
   cout << "max center " << Lep(a) << endl;
   cout << "max dp1 " << LepD(a) << endl;
   cout << "max dp2 " << LepD2(a) << endl;
-  
-  // cout << " num squares: " << numSqua(12) << endl;
+  cout << " num squares: " << numSqua(12) << endl;
   return 0;
 }
