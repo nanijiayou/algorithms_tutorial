@@ -1,10 +1,3 @@
-/*
- * @Author: kalai
- * @LastEditors: kalai
- * @Description:
- * @FilePath: \algorithms_tutorial\src\DP\mem.cpp
- */
-
 // 山洞里有M株不同的草药，采每一株都需要一些时间t_i，每一株也有它自身的价值W_i。给你一段时间T，在这段时间里，你可以采到一些草药。让采到的草药的总价值最大。/
 #include <iostream>
 #include <cstring>
