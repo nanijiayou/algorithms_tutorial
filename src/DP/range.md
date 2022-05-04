@@ -33,9 +33,11 @@ $$ f_{i,j} = min(f_{i,k} + f_{k+1, j} + sum_j - sum_{i-1}) $$
 
 **核心代码**
 ```
+  // 枚举区间长度，长度为1的不需要合并，所以不需枚举
   for(len = 1; len <= n; len++)
-    for(i = 1; i <= n; i++)
-      int j = len + i - 1;
+    // 枚举左端点 
+    for(i = 1; i + len - 1 <= n; i++)
+      int j = len + i - 1; // 右端点
       for(k = i; k < j; k++)
         f[i][j] = min(f[i][j], f[i][k] + f[k+1][j] + sum[j] - sum[i-1]);
 ```
