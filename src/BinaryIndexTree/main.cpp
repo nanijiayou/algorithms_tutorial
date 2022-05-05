@@ -2,91 +2,145 @@
 #include <vector>
 using namespace std;
 
-vector<int> nums {1, 2, 8, 5, 3, 9, 6};
-int n = 7;
-int tree[7];
-int lowbit(int x) {
-  return x & -x;
-}
 
-void init(vector<int>& nums) {
-  int n = nums.size();
-  // 每个结点值由所有与自己相连的儿子的值求和得到。/
-  // 可以每次确定完儿子的值之后，用自己的值更新自己直接父亲的值/
-  for(int i = 1; i <= n; ++i) {
-    tree[i] += nums[i - 1];
-    int j = i + lowbit(i);
-    if(j <= n) tree[j] += tree[i];
+class FenwickTree {
+private:
+  vector<int> bit;
+  int n;
+  inline int lowbit(int i) { return i & (-i); };
+public:
+  FenwickTree(int n): n(n) {
+    bit.assign(n+1, 0);
   }
-}
 
-void add(int k, int val) {
-  while(k <= n) {
-    tree[k] += val;
-    k += lowbit(k);
+  FenwickTree(vector<int> a): FenwickTree(a.size()) {
+    // for(int i = 1; i <= n; i++) {
+    //   bit[i] += a[i-1];
+    //   int j = i + lowbit(i);
+    //   if(j <= n) bit[j] += bit[i];
+    // }
+    for(size_t i = 1; i <= a.size(); i++) {
+      add(i, a[i-1]);
+    }
   }
-}
 
-void update(int k, int val) {
-  add(k, val - nums[k-1]);
-  nums[k] = val;
-}
-
-int getSum(int k) {
-  int ret = 0;
-  while(k) {
-    ret += tree[k];
-    k -= lowbit(k);
+  void add(int i, int val) {
+    // cout << " ";
+    for(; i <= n; i += lowbit(i)) {
+      // cout << i << " ";
+      bit[i] += val;
+    }
+    // cout << endl;
   }
-  return ret;
-}
 
-int lg(int n) {
-  int k = 0;
-  while(n != 1) {
-    n >>= 1;
-    ++k;
+  int sum(int r) {
+    int sum  = 0;
+    for(; r > 0; r -= lowbit(r)) sum += bit[r];
+    return sum;
   }
-  return k;
-}
 
-// 查找第 k 小/
-int kth(int k) {
-  int cnt = 0, ret = 0;
-  for(int i = lg(n); ~i; --i) {
-    ret += 1 << i;
-    if(ret >= n || cnt + tree[ret] >= k) ret -= 1 << i;
-    else cnt += tree[ret];
+  int sum(int l, int r) {
+    return sum(r) - sum(l);
   }
-  return ret + 1;
-}
+
+  void range_add(int l, int r, int val) {
+    add(l, val);
+    add(r+1, -val);
+  }
+};
+
+class FenwickTreeMin {
+  private:
+    int n;
+    vector<int> bit;
+    const int INF = 0x3f3f;
+    inline int lowbit(int x) { return x & (-x); };
+  public:
+    FenwickTreeMin(int n): n(n) {
+      bit.assign(n+1, INF);
+    }
+
+    FenwickTreeMin(vector<int> a): FenwickTreeMin(a.size()) {
+      for(int i = 1; i <= n; i++) {
+        update(i, a[i-1]);
+      }
+    }
+
+    void update(int i, int val) {
+      for(; i <= n; i += lowbit(i)) {
+        bit[i] = min(bit[i], val);
+      }
+    }
+
+    int query(int r) {
+      int ret = INF;
+      for(; r > 0; r -= lowbit(r)) {
+        ret = min(ret, bit[r]);
+      }
+      return ret;
+    }
+};
+
+class FenwickTree2D {
+  private:
+    int m, n;
+    vector<vector<int>> bit;
+    inline int lowbit(int x) { return x & (-x); };
+  public:
+    FenwickTree2D(int m, int n): m(m), n(n) {
+      bit.assign(n+1, vector<int>(m+1, 0));
+    }
+
+    FenwickTree2D(vector<vector<int>> a) {
+      n = a.size();
+      m = a[0].size();
+      bit.assign(n + 1, vector<int>(m + 1, 0));
+
+      for(int i = 1; i <= n; i++) {
+        for(int j = 1; j <= m; j++) {
+          add(i, j, a[i-1][j-1]);
+        }
+      }
+    }
+
+    void add(int x, int y, int val) {
+      for(int i = x; i <= n; i += lowbit(i)) {
+        for(int j = y; j <= m; j += lowbit(j)) {
+          bit[i][j] += val;
+        }
+      }
+    }
+
+    int sum(int x, int y) {
+      int ret = 0;
+      for(int i = x; i > 0; i -= lowbit(i)) {
+        for(int j = y; j > 0; j -= lowbit(j)) {
+          ret += bit[i][j];
+        }
+      }
+      return ret;
+    }
+};
 
 int main() {
-  // build
-  init(nums); 
-  cout << " get sum of 3  " << getSum(3) << endl;
-  cout << " get sum of 5  " << getSum(5) << endl;
-  cout << " get sum of 6  " << getSum(6) << endl;
-  cout << " get sum of 7  " << getSum(7) << endl;
-  cout << endl;
+  vector<int> nums {12, 2, 8, 5, 3, 9, 6, 10};
+  FenwickTree ft(nums);
 
-  add(1, 3);
-  cout << " get sum of 3  " << getSum(3) << endl;
-  cout << " get sum of 5  " << getSum(5) << endl;
-  cout << " get sum of 6  " << getSum(6) << endl;
-  cout << " get sum of 7  " << getSum(7) << endl;
-  cout << endl;
+  cout << "sum of [1, 3] is " << ft.sum(3) << endl;
+  cout << "sum of [1, 5] is " << ft.sum(5) << endl;
+  cout << "sum of [4, 6] is " << ft.sum(4, 6) << endl;
 
-  // update index of element
-  update(4, 7);
-  cout << " get sum of 3  " << getSum(3) << endl;
-  cout << " get sum of 5  " << getSum(5) << endl;
-  cout << " get sum of 6  " << getSum(6) << endl;
-  cout << " get sum of 7  " << getSum(7) << endl;
-  cout << endl;
+  cout << "range [1, 3] add 3 " << endl;
+  ft.range_add(1, 3, 3);
+  cout << "sum of [1, 3] is " << ft.sum(3) << endl;
 
-  // kth
-  cout << " get small kth of 3 is " << kth(2) << endl;
+  FenwickTreeMin ftm(nums);
+  cout << "min of [1, 3] is " << ftm.query(3) << endl;
+
+  vector<vector<int>> nums2 {{12, 2, 8, 5, 3, 9, 6, 10}, {12, 2, 8, 5, 3, 9, 6, 10}, {12, 2, 8, 5, 3, 9, 6, 10}};
+  FenwickTree2D ft2d(nums2);
+
+  cout << "sum of [3, 5] in 2d arr is " << ft2d.sum(3, 5) << endl;
 
   return 0;
 }
