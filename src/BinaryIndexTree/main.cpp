@@ -40,7 +40,7 @@ public:
   }
 
   int sum(int l, int r) {
-    return sum(r) - sum(l);
+    return sum(r) - sum(l-1);
   }
 
   void range_add(int l, int r, int val) {
@@ -123,7 +123,8 @@ class FenwickTree2D {
 };
 
 int main() {
-  vector<int> nums {12, 2, 8, 5, 3, 9, 6, 10};
+  // vector<int> nums {12, 2, 8, 5, 3, 9, 6, 10};
+  vector<int> nums {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
   FenwickTree ft(nums);
 
   cout << "sum of [1, 3] is " << ft.sum(3) << endl;
