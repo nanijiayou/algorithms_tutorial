@@ -16,6 +16,7 @@ personal algorithms collections
     BucketSort
     QuickSort
     QuickSelect
+    BinarySearch
     MaxSubArray
     CountingSort
 

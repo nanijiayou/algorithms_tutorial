@@ -23,6 +23,7 @@ LIST(APPEND algoList
     BucketSort
     QuickSort
     QuickSelect
+    BinarySearch
     MaxSubArray
     CountingSort)
 

@@ -2,181 +2,150 @@
 #include <unordered_map>
 using namespace std;
 
-struct Node {
-  int key, val;
-  Node *next, *pre;
-  Node(int key, int val) : key(key), val(val), next(nullptr), pre(nullptr){};
+class Node {
+public:
+  int val, key;
+  Node *prev, *next;
+  Node(int key, int val): key(key), val(val), prev(nullptr), next(nullptr) {};
+  Node(int key, int val, Node* prev, Node* next): key(key), val(val), prev(prev), next(next) {};
 };
 
 class LinkedList {
- private:
+private:
   int size;
+public:
   Node *head, *tail;
-
- public:
-  LinkedList(/* args */);
-  Node* push_back(int key, int val);  // 在末尾插入
-  Node* pop();                        // 弹出头部元素
-  Node* remove(Node* x);              // 删除一个node
-  inline Node* getHead() { return head; };
-  inline Node* getTail() { return tail; };
-  inline int getSize() { return size; };
-  void print();
-  ~LinkedList();
-};
-
-LinkedList::LinkedList() {
-  head = new Node(0, 0);
-  tail = new Node(0, 0);
-  head->next = tail;
-  tail->pre = head;
-  size = 0;
-}
-
-Node* LinkedList::push_back(int key, int val) {
-  Node* node = new Node(key, val);
-  node->pre = tail->pre;
-  node->next = tail;
-  tail->pre->next = node;
-  tail->pre = node;
-  size++;
-  return node;
-}
-
-Node* LinkedList::pop() {
-  if (head->next == tail)
-    return tail;
-  else {
-    Node* temp = head->next;
-    head->next = head->next->next;
-    head->next->pre = head;
+  
+  LinkedList() {
+    size = 0;
+    head = new Node(0, 0);
+    tail = new Node(0, 0);
+    head->next = tail;
+    tail->prev = head;
+  };
+  
+  void push_back(Node* node) {
+    //  Node* node = new Node(key, val);
+    node->next = tail;
+    node->prev = tail->prev;
+    tail->prev = node;
+    node->prev->next = node;
+    size++;
+  }
+  
+  Node* pop_front() {
+    Node* node = head->next;
+    Node* temp = node;
+    head->next = node->next;
+    head->next->prev = head;
     size--;
     return temp;
   }
-}
-
-Node* LinkedList::remove(Node* x) {
-  if (x == head || x == tail)
-    return x;
-  else {
-    Node* temp = x;
-    temp->pre->next = temp->next;
-    temp->next->pre = temp->pre;
-    size--;
+  
+  Node* erase(Node* node) {
+    Node* temp = node;
+    node->prev->next = node->next;
+    node->next->prev = node->prev;
     return temp;
+    size--;
   }
-}
-
-void LinkedList::print() {
-  Node* cur = head->next;
-  cout << "list data: ";
-  while (cur != tail) {
-    cout << "[" << cur->key << " " << cur->val << "]";
-    cur = cur->next;
+  
+  int getSize() {
+    return size;
   }
-  cout << endl;
-}
-
-LinkedList::~LinkedList() {
-  delete head;
-  delete tail;
+  
+  void print() {
+    Node* node = head;
+    while(node != tail) {
+      cout << " [" << node->key << " " << node->val << "]";
+      node = node->next;
+    }
+    cout << endl;
+  }
 };
 
 class LRU {
- private:
-  int size = 0;
-  int cmp;
-  unordered_map<int, Node*> mp;
+private:
+  int capacity;
   LinkedList list;
-
- public:
-  LRU(int size = 0);
-  int get(int key);
-  void put(int key, int val);
-  void print();
-  ~LRU();
-};
-
-LRU::LRU(int cmp) : cmp(cmp) {}
-
-int LRU::get(int key) {
-  if (mp.find(key) == mp.end())
-    return -1;
-  else {
-    // 先删除该结点，然后在链表尾部插入该结点
-    Node* removedNode = list.remove(mp[key]);
-    Node* node = list.push_back(removedNode->key, removedNode->val);
-    // 更新map的key
+  unordered_map<int, Node*> mp;
+public:
+  LRU(int capacity): capacity(capacity) {};
+  
+  int get(int key) {
+    if(mp.find(key) == mp.end()) {
+      return -1;
+    }
+    Node* oldNode = mp[key];
+    list.erase(oldNode);
+    Node* node = new Node(key, oldNode->val);
+    list.push_back(node);
     mp[key] = node;
     return node->val;
-  }
-}
-
-void LRU::put(int key, int val) {
-  if (mp.find(key) != mp.end()) {
-    // 如果有，则将其放到list尾部，然后更新map
-    list.remove(mp[key]);
-    Node* node = list.push_back(key, val);
-    mp[key] = node;
-  } else {
-    // 如果没有，先检查容量，容量不够，删除list头部结点
-    if (list.getSize() >= cmp) {
-      Node* node = list.pop();
-      mp.erase(node->key);
-      size--;
+  };
+  
+  void put(int key, int val) {
+    if(mp.find(key) != mp.end()) {
+      Node* oldNode = mp[key];
+      if(oldNode->val == val) return;
+      else {
+        list.erase(oldNode);
+        Node* node = new Node(key, val);
+        list.push_back(node);
+        mp[key] = node;
+      }
+    } else {
+      Node* node = new Node(key, val);
+      list.push_back(node);
+      mp[key] = node;
+      if(list.getSize() > capacity) {
+        Node* node = list.pop_front();
+        mp.erase(node->key);
+      }
     }
-    // 新结点都插入list尾部
-    Node* node = list.push_back(key, val);
-    // 需要更新map中key的指向
-    mp[key] = node;
-    size++;
+  };
+  
+  void print() {
+    Node* node = list.head->next;
+    while(node != list.tail) {
+      cout << " [" << node->key << " " << node->val << "]";
+      node = node->next;
+    }
+    cout << endl;
   }
-}
-
-void LRU::print() {
-  auto head = list.getHead();
-  auto tail = list.getTail();
-
-  Node* cur = head->next;
-  cout << "lru list data: ";
-  while (cur != tail) {
-    cout << "[" << cur->key << " " << cur->val << "]";
-    cur = cur->next;
-  }
-  cout << endl;
-}
-
-LRU::~LRU(){};
+};
 
 
 int main() {
-  int a[7] = {1, 3, 5, 8, 9, 7, 2};
   LinkedList list;
-  for (int i = 0; i < 7; ++i) {
-    list.push_back(a[i], a[i]);
-  }
+  list.push_back(new Node(1, 2));
+  list.push_back(new Node(2, 3));
+  list.push_back(new Node(3, 4));
+  list.push_back(new Node(4, 5));
   list.print();
-
-  list.pop();
+  
+  list.pop_front();
   list.print();
-
-  Node* node = list.getHead();
-  node = node->next->next;
-  list.remove(node);
-  list.print();
-
+  
+  
   LRU lru(3);
-  lru.put(1, 1);
+  lru.put(1, 2);
   lru.print();
-  lru.put(3, 3);
+  lru.put(2, 3);
   lru.print();
-  lru.put(5, 5);
+  lru.put(3, 4);
   lru.print();
-  lru.put(7, 7);
+  lru.put(5, 6);
   lru.print();
-
-  cout << "get 3 " << lru.get(3) << endl;
+  
+  cout << " get 2 " << lru.get(2) << endl;
   lru.print();
-
+  
+  cout << " get 3 " << lru.get(3) << endl;
+  lru.print();
+  
+  cout << " get 3 " << lru.get(5) << endl;
+  lru.print();
+  
   return 0;
 }
